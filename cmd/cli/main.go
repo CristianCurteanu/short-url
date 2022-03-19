@@ -76,7 +76,7 @@ func main() {
 			},
 			{
 				Name:  "delete-mapping",
-				Usage: "Fetches url key mapping",
+				Usage: "Deletes url key mapping",
 				Action: func(c *cli.Context) error {
 					key := c.String("key")
 
