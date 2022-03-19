@@ -38,7 +38,9 @@ func (s *grpcMappingServer) GetMapping(ctx context.Context, req *gen.GetMappingR
 			ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*30)
 			defer cancel()
 			err := s.app.Cache.Set(ctx, k, url)
-			log.Printf("unable to store to cache, err: `%s`", err)
+			if err != nil {
+				log.Printf("unable to store to cache, err: `%v`", err)
+			}
 		}(mapping.Key, mapping.URL)
 	}
 
@@ -60,7 +62,9 @@ func (s *grpcMappingServer) CreateMapping(ctx context.Context, req *gen.CreateMa
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*30)
 		defer cancel()
 		err := s.app.Cache.Set(ctx, k, url)
-		log.Printf("unable to store to cache, err: `%s`", err)
+		if err != nil {
+			log.Printf("unable to store to cache, err: `%v`", err)
+		}
 	}(key, req.Url)
 
 	return &gen.CreateMappingResponse{Key: key}, nil

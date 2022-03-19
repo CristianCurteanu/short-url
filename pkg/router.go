@@ -11,10 +11,10 @@ func (app *App) SetupRouter() *App {
 
 	api := router.Group("/api")
 	{
-		api.POST("/url", handlers.CreateMappingHandler(app.UrlsDAO, app.Cache))
-		api.GET("/url/:id", handlers.GetMappingHandler(app.UrlsDAO, app.Cache))
-		api.GET("/url/:id/redirects", handlers.GetMappingRedirectsCounterHandler(app.UrlsDAO))
-		api.DELETE("/url/:id", handlers.DeleteMappingHandler(app.UrlsDAO))
+		api.POST("/mappings", handlers.CreateMappingHandler(app.UrlsDAO, app.Cache))
+		api.GET("/mappings/:id", handlers.GetMappingHandler(app.UrlsDAO, app.Cache))
+		api.GET("/mappings/:id/redirects", handlers.GetMappingRedirectsCounterHandler(app.UrlsDAO))
+		api.DELETE("/mappings/:id", handlers.DeleteMappingHandler(app.UrlsDAO))
 	}
 
 	app.router = router

@@ -44,7 +44,9 @@ func GetMappingHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) gin
 				ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*30)
 				defer cancel()
 				err := cch.Set(ctx, k, url)
-				log.Printf("unable to store to cache, err: `%s`", err)
+				if err != nil {
+					log.Printf("unable to store to cache, err: `%v`", err)
+				}
 			}(mapping.Key, mapping.URL)
 		}
 

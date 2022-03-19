@@ -5,9 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 	"time"
 )
 
@@ -22,6 +25,27 @@ func init() {
 
 func SetTimeout(seconds uint8) {
 	timeout = &seconds
+}
+
+func NewClient(u string) Client {
+	var err error
+	cl := Client{}
+	temp, err := url.Parse(u)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cl.u = *temp
+
+	if !strings.HasSuffix(cl.u.Path, "api") {
+		log.Fatal("Please set the path as `/api`")
+	}
+
+	cl.client = &http.Client{
+		Transport: http.DefaultTransport,
+	}
+
+	return cl
 }
 
 type Client struct {
@@ -39,15 +63,15 @@ type MappingResponse struct {
 }
 
 type CreateMappingResponse struct {
-	URL string `json:"url"`
-}
-
-type CreateMappingRequest struct {
 	Key string `json:"key"`
 }
 
-type DeleteMappingResponse struct {
+type CreateMappingRequest struct {
 	URL string `json:"url"`
+}
+
+type DeleteMappingResponse struct {
+	Deleted string `json:"deleted"`
 }
 
 type DeleteMappingRequest struct {
@@ -75,7 +99,7 @@ func (c Client) GetMapping(req MappingRequest) (m MappingResponse, err error) {
 }
 
 func (c Client) GetMappingWithContext(ctx context.Context, req MappingRequest) (m MappingResponse, err error) {
-	c.u.Path = path.Join(c.u.Path, "urls", req.Key)
+	c.u.Path = path.Join(c.u.Path, "mappings", req.Key)
 	err = c.executeRequest(request{
 		ctx:    ctx,
 		method: http.MethodGet,
@@ -92,6 +116,61 @@ func (c Client) GetMappingCounter(req MappingRequest) (MappingCounterResponse, e
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*timeout)*time.Second)
 	defer cancel()
 	return c.GetMappingCounterWithContext(ctx, req)
+}
+
+func (c Client) GetMappingCounterWithContext(ctx context.Context, req MappingRequest) (m MappingCounterResponse, err error) {
+	c.u.Path = path.Join(c.u.Path, "mappings", req.Key, "redirects")
+	err = c.executeRequest(request{
+		ctx:    ctx,
+		method: http.MethodGet,
+		url:    c.u.String(),
+	}, &m)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (c Client) CreateMapping(req CreateMappingRequest) (CreateMappingResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*timeout)*time.Second)
+	defer cancel()
+	return c.CreateMappingWithContext(ctx, req)
+}
+
+func (c Client) CreateMappingWithContext(ctx context.Context, req CreateMappingRequest) (m CreateMappingResponse, err error) {
+	c.u.Path = path.Join(c.u.Path, "mappings")
+	err = c.executeRequest(request{
+		ctx:    ctx,
+		method: http.MethodPost,
+		url:    c.u.String(),
+		body:   req,
+	}, &m)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (c Client) DeleteMapping(req DeleteMappingRequest) (DeleteMappingResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*timeout)*time.Second)
+	defer cancel()
+	return c.DeleteMappingWithContext(ctx, req)
+}
+
+func (c Client) DeleteMappingWithContext(ctx context.Context, req DeleteMappingRequest) (m DeleteMappingResponse, err error) {
+	c.u.Path = path.Join(c.u.Path, "mappings", req.Key)
+	err = c.executeRequest(request{
+		ctx:    ctx,
+		method: http.MethodDelete,
+		url:    c.u.String(),
+	}, &m)
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 type request struct {
@@ -121,66 +200,10 @@ func (c Client) executeRequest(r request, resp interface{}) error {
 		return err
 	}
 	defer rs.Body.Close()
-	var result []byte
-	_, err = rs.Body.Read(result)
+	result, err := ioutil.ReadAll(rs.Body)
 	if err != nil {
 		return err
 	}
 
 	return json.Unmarshal(result, resp)
-}
-
-func (c Client) GetMappingCounterWithContext(ctx context.Context, req MappingRequest) (m MappingCounterResponse, err error) {
-	c.u.Path = path.Join(c.u.Path, "urls", req.Key, "redirects")
-	err = c.executeRequest(request{
-		ctx:    ctx,
-		method: http.MethodGet,
-		url:    c.u.String(),
-	}, &m)
-	if err != nil {
-		return
-	}
-
-	return
-}
-
-func (c Client) CreateMapping(req CreateMappingRequest) (CreateMappingResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*timeout)*time.Second)
-	defer cancel()
-	return c.CreateMappingWithContext(ctx, req)
-}
-
-func (c Client) CreateMappingWithContext(ctx context.Context, req CreateMappingRequest) (m CreateMappingResponse, err error) {
-	c.u.Path = path.Join(c.u.Path, "urls")
-	err = c.executeRequest(request{
-		ctx:    ctx,
-		method: http.MethodPost,
-		url:    c.u.String(),
-		body:   req,
-	}, &m)
-	if err != nil {
-		return
-	}
-
-	return
-}
-
-func (c Client) DeleteMapping(req DeleteMappingRequest) (DeleteMappingResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*timeout)*time.Second)
-	defer cancel()
-	return c.DeleteMappingWithContext(ctx, req)
-}
-
-func (c Client) DeleteMappingWithContext(ctx context.Context, req DeleteMappingRequest) (m DeleteMappingResponse, err error) {
-	c.u.Path = path.Join(c.u.Path, "urls", req.Key)
-	err = c.executeRequest(request{
-		ctx:    ctx,
-		method: http.MethodDelete,
-		url:    c.u.String(),
-	}, &m)
-	if err != nil {
-		return
-	}
-
-	return
 }
