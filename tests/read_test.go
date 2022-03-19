@@ -36,7 +36,7 @@ func TestRead_Success(t *testing.T) {
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, "/api/url/"+key, nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/mappings/"+key, nil)
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
@@ -64,7 +64,7 @@ func TestRead_FailDeleteRequest(t *testing.T) {
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, "/api/url/"+key, nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/mappings/"+key, nil)
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
@@ -91,7 +91,7 @@ func TestRead_FailEmptyKey(t *testing.T) {
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, "/api/url/"+key, nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/mappings/"+key, nil)
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
 	expect.Equal(t, http.StatusNotFound, w.Code)

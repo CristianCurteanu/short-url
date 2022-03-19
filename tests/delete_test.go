@@ -22,7 +22,7 @@ func TestDelete_Success(t *testing.T) {
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodDelete, "/api/url/"+key, nil)
+	req, _ := http.NewRequest(http.MethodDelete, "/api/mappings/"+key, nil)
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
@@ -42,7 +42,7 @@ func TestDelete_FailDeleteRequest(t *testing.T) {
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodDelete, "/api/url/"+key, nil)
+	req, _ := http.NewRequest(http.MethodDelete, "/api/mappings/"+key, nil)
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
@@ -61,7 +61,7 @@ func TestDelete_FailEmptyKey(t *testing.T) {
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodDelete, "/api/url/"+key, nil)
+	req, _ := http.NewRequest(http.MethodDelete, "/api/mappings/"+key, nil)
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
 	expect.Equal(t, http.StatusNotFound, w.Code)

@@ -64,7 +64,7 @@ func TestCreate_Success(t *testing.T) {
 	expect.NoError(t, err)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodPost, "/api/url", bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodPost, "/api/mappings", bytes.NewReader(body))
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
@@ -91,7 +91,7 @@ func TestCreate_FailIfNotURL(t *testing.T) {
 	expect.NoError(t, err)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodPost, "/api/url", bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodPost, "/api/mappings", bytes.NewReader(body))
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 	expect.Equal(t, http.StatusUnprocessableEntity, w.Code)
@@ -111,7 +111,7 @@ func TestCreate_FailIfWrongRequestBody(t *testing.T) {
 
 	app.UrlsDAO = new(UrlMappingDAOMock)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodPost, "/api/url", bytes.NewReader([]byte("wrong-input")))
+	req, _ := http.NewRequest(http.MethodPost, "/api/mappings", bytes.NewReader([]byte("wrong-input")))
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 	expect.Equal(t, http.StatusUnprocessableEntity, w.Code)
@@ -139,7 +139,7 @@ func TestCreate_FailAddRequest(t *testing.T) {
 	expect.NoError(t, err)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodPost, "/api/url", bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodPost, "/api/mappings", bytes.NewReader(body))
 
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
