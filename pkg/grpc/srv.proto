@@ -1,0 +1,34 @@
+syntax = "proto3";
+option go_package="./pkg/grpc";
+
+service MappingsService {
+  rpc GetMapping (GetMappingRequest) returns (GetMappingResponse);
+  rpc CreateMapping (CreateMappingRequest) returns (CreateMappingResponse);
+  rpc DeleteMapping (DeleteMappingRequest) returns (DeleteMappingResponse);
+}
+
+message DeleteMappingResponse {
+  string deleted = 1;
+}
+
+message DeleteMappingRequest {
+  string key = 1;
+}
+
+message CreateMappingRequest {
+  string url = 1;
+}
+
+message CreateMappingResponse {
+  string key = 1;
+}
+
+message GetMappingRequest {
+  string key = 1;
+}
+
+message GetMappingResponse {
+  string key = 1;
+  string url = 2;
+}
+

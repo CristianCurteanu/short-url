@@ -1,0 +1,72 @@
+
+version: '3.9'
+
+services:
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - cache:/data
+
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/url-shortener/data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=S3cret
+
+  grpc:
+    restart: always
+    build:
+      dockerfile: Dockerfile.grpc
+      context: .
+    expose:
+      - "3001"
+    ports:
+      - "3001:3001"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mongodb
+      - cache
+    volumes:
+      - ~/url-shortener/cache:/src/_cache
+    environment:
+      PORT: 3001
+      MONGO_URI: mongodb://root:S3cret@mongodb:27017/?maxPoolSize=20&w=majority
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+
+  server:
+    restart: always
+    build:
+      dockerfile: Dockerfile.rest
+      context: .
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mongodb
+      - cache
+    volumes:
+      - ~/url-shortener/cache:/src/_cache
+    environment:
+      PORT: 3000
+      MONGO_URI: mongodb://root:S3cret@mongodb:27017/?maxPoolSize=20&w=majority
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+
+volumes:
+  cache:
+    driver: local
