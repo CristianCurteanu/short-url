@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/CristianCurteanu/url-shortener/pkg/cache"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 )
@@ -19,7 +19,7 @@ type URLMappingResponse struct {
 	URL string `json:"url"`
 }
 
-func GetMappingHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) gin.HandlerFunc {
+func GetMappingHandler(urlMappingDAO mappings.URLMappingDAO, cch cache.UrlCache) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
 
@@ -54,7 +54,7 @@ func GetMappingHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) gin
 	}
 }
 
-func GetMappingRedirectsCounterHandler(urlMappingDAO urls.URLMappingDAO) gin.HandlerFunc {
+func GetMappingRedirectsCounterHandler(urlMappingDAO mappings.URLMappingDAO) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
 

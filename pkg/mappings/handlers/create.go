@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/CristianCurteanu/url-shortener/pkg/cache"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +19,7 @@ type URLCreationResponse struct {
 	Key string `json:"key"`
 }
 
-func CreateMappingHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) gin.HandlerFunc {
+func CreateMappingHandler(urlMappingDAO mappings.URLMappingDAO, cch cache.UrlCache) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req URLCreationRequest
 		err := ctx.ShouldBindJSON(&req)
@@ -31,8 +31,8 @@ func CreateMappingHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) 
 			return
 		}
 
-		key := urls.CreateKey(req.URL)
-		err = urlMappingDAO.Add(ctx, urls.UrlMapping{
+		key := mappings.CreateKey(req.URL)
+		err = urlMappingDAO.Add(ctx, mappings.UrlMapping{
 			Key: key,
 			URL: req.URL,
 		})

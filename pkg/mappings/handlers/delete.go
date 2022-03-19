@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"github.com/gin-gonic/gin"
 )
 
-func DeleteMappingHandler(urlMappingDAO urls.URLMappingDAO) gin.HandlerFunc {
+func DeleteMappingHandler(urlMappingDAO mappings.URLMappingDAO) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
 

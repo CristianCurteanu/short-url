@@ -11,7 +11,7 @@ import (
 
 	"github.com/CristianCurteanu/url-shortener/pkg"
 	gen "github.com/CristianCurteanu/url-shortener/pkg/grpc"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"github.com/go-redis/redis"
 	"google.golang.org/grpc"
 )
@@ -48,8 +48,8 @@ func (s *grpcMappingServer) GetMapping(ctx context.Context, req *gen.GetMappingR
 }
 
 func (s *grpcMappingServer) CreateMapping(ctx context.Context, req *gen.CreateMappingRequest) (*gen.CreateMappingResponse, error) {
-	key := urls.CreateKey(req.GetUrl())
-	err := s.app.UrlsDAO.Add(ctx, urls.UrlMapping{
+	key := mappings.CreateKey(req.GetUrl())
+	err := s.app.UrlsDAO.Add(ctx, mappings.UrlMapping{
 		Key: key,
 		URL: req.GetUrl(),
 	})

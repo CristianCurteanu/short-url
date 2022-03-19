@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"github.com/CristianCurteanu/url-shortener/pkg/urls/handlers"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings/handlers"
 	"github.com/gin-gonic/gin"
 )
 

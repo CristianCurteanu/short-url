@@ -1,4 +1,4 @@
-package urls
+package mappings
 
 type UrlMapping struct {
 	Key     string `bson:"key"`

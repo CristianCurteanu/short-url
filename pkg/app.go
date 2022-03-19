@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/CristianCurteanu/url-shortener/pkg/cache"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,7 +23,7 @@ type Config struct {
 }
 
 type App struct {
-	UrlsDAO urls.URLMappingDAO
+	UrlsDAO mappings.URLMappingDAO
 	Cache   cache.UrlCache
 	router  http.Handler
 	Config  *Config
@@ -58,7 +58,7 @@ func (app *App) SetupUrlsDAO() error {
 	}
 
 	db := connection.Database(app.Config.Database)
-	app.UrlsDAO = urls.NewUrlMappingDao(db.Collection("mappings"))
+	app.UrlsDAO = mappings.NewUrlMappingDao(db.Collection("mappings"))
 
 	return nil
 }

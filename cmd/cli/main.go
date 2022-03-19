@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/CristianCurteanu/url-shortener/pkg/urls/client"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings/client"
 	"github.com/urfave/cli/v2"
 )
 

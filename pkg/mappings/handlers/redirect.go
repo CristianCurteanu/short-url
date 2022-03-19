@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/CristianCurteanu/url-shortener/pkg/cache"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +18,7 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-func RedirectHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) gin.HandlerFunc {
+func RedirectHandler(urlMappingDAO mappings.URLMappingDAO, cch cache.UrlCache) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		key := ctx.Param("key")
 
@@ -52,7 +52,7 @@ func RedirectHandler(urlMappingDAO urls.URLMappingDAO, cch cache.UrlCache) gin.H
 	}
 }
 
-func incrementRedirect(ctx *gin.Context, dao urls.URLMappingDAO, key, url string) {
+func incrementRedirect(ctx *gin.Context, dao mappings.URLMappingDAO, key, url string) {
 	err := dao.IncrementCounter(ctx, key)
 	if err != nil {
 		log.Print(err)

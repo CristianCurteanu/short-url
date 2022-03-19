@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/CristianCurteanu/url-shortener/pkg"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
 	"github.com/alicebob/miniredis"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -28,7 +28,7 @@ func TestRead_Success(t *testing.T) {
 
 	key := "aNjR4bEV"
 	dao := new(UrlMappingDAOMock)
-	dao.On("SearchById", mock.Anything, key).Return(urls.UrlMapping{
+	dao.On("SearchById", mock.Anything, key).Return(mappings.UrlMapping{
 		Key:     key,
 		URL:     "http://google.com",
 		Counter: 0,
@@ -60,7 +60,7 @@ func TestRead_FailDeleteRequest(t *testing.T) {
 
 	key := "aNjR4bEV"
 	dao := new(UrlMappingDAOMock)
-	dao.On("SearchById", mock.Anything, key).Return(urls.UrlMapping{}, errors.New("not found"))
+	dao.On("SearchById", mock.Anything, key).Return(mappings.UrlMapping{}, errors.New("not found"))
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()
@@ -87,7 +87,7 @@ func TestRead_FailEmptyKey(t *testing.T) {
 
 	key := ""
 	dao := new(UrlMappingDAOMock)
-	dao.On("SearchById", mock.Anything, key).Return(urls.UrlMapping{}, errors.New("not found"))
+	dao.On("SearchById", mock.Anything, key).Return(mappings.UrlMapping{}, errors.New("not found"))
 	app.UrlsDAO = dao
 
 	w := httptest.NewRecorder()

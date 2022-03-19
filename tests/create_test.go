@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	"github.com/CristianCurteanu/url-shortener/pkg"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls"
-	"github.com/CristianCurteanu/url-shortener/pkg/urls/handlers"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings"
+	"github.com/CristianCurteanu/url-shortener/pkg/mappings/handlers"
 	"github.com/alicebob/miniredis"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -22,14 +22,14 @@ type UrlMappingDAOMock struct {
 	mock.Mock
 }
 
-func (m *UrlMappingDAOMock) Add(ctx context.Context, mapping urls.UrlMapping) error {
+func (m *UrlMappingDAOMock) Add(ctx context.Context, mapping mappings.UrlMapping) error {
 	args := m.Called(ctx, mapping)
 	return args.Error(0)
 }
 
-func (m *UrlMappingDAOMock) SearchById(ctx context.Context, key string) (urls.UrlMapping, error) {
+func (m *UrlMappingDAOMock) SearchById(ctx context.Context, key string) (mappings.UrlMapping, error) {
 	args := m.Called(ctx, key)
-	return args.Get(0).(urls.UrlMapping), args.Error(1)
+	return args.Get(0).(mappings.UrlMapping), args.Error(1)
 }
 
 func (m *UrlMappingDAOMock) Delete(ctx context.Context, key string) error {
@@ -69,7 +69,7 @@ func TestCreate_Success(t *testing.T) {
 	app.SetupRouter().Router().ServeHTTP(w, req)
 
 	expect.Equal(t, http.StatusCreated, w.Code)
-	expect.Contains(t, string(w.Body.Bytes()), urls.CreateKey(url))
+	expect.Contains(t, string(w.Body.Bytes()), mappings.CreateKey(url))
 }
 
 func TestCreate_FailIfNotURL(t *testing.T) {
